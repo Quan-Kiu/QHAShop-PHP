@@ -3,8 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\InvoiceStatus;
-use App\Http\Requests\StoreInvoiceStatusRequest;
-use App\Http\Requests\UpdateInvoiceStatusRequest;
+use Illuminate\Http\Request;
 
 class InvoiceStatusController extends Controller
 {
@@ -15,7 +14,8 @@ class InvoiceStatusController extends Controller
      */
     public function index()
     {
-        //
+        $InvoiceStatus = InvoiceStatus::all();
+        return response()->json(['InvoiceStatuss'=>$InvoiceStatus],200);
     }
 
     /**
@@ -31,32 +31,47 @@ class InvoiceStatusController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\StoreInvoiceStatusRequest  $request
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreInvoiceStatusRequest $request)
+    public function store(Request $request)
     {
-        //
+         $request->validate([
+            'type'=>'required|max:191',
+            'name'=>'required|max:191',
+        ]); 
+        
+        $InvoiceStatus = new InvoiceStatus;
+        $InvoiceStatus->type = $request->type;
+        $InvoiceStatus->name = $request->name;
+        $InvoiceStatus->save(); 
+        return response()->json(['message'=>'InvoiceStatus Add Successfully'],200);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\InvoiceStatus  $invoiceStatus
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(InvoiceStatus $invoiceStatus)
+    public function show($id)
     {
-        //
+        $InvoiceStatus = InvoiceStatus::find($id);
+        if($InvoiceStatus){
+            return response()->json(['InvoiceStatus'=>$InvoiceStatus],200);
+        }
+        else{
+            return response()->json(['message'=>'No InvoiceStatus Found'],404);
+        }
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\InvoiceStatus  $invoiceStatus
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(InvoiceStatus $invoiceStatus)
+    public function edit($id)
     {
         //
     }
@@ -64,23 +79,50 @@ class InvoiceStatusController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \App\Http\Requests\UpdateInvoiceStatusRequest  $request
-     * @param  \App\Models\InvoiceStatus  $invoiceStatus
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateInvoiceStatusRequest $request, InvoiceStatus $invoiceStatus)
+    public function update(Request $request, $id)
     {
-        //
+        /* $InvoiceStatus = InvoiceStatus::find($id);
+        $InvoiceStatus->update($request->all());
+        return $InvoiceStatus ;*/
+        $request->validate([
+            'type'=>'required|max:191',
+            'name'=>'required|max:191',
+        ]); 
+        
+        $InvoiceStatus = InvoiceStatus::find($id);
+        if($InvoiceStatus){
+            $InvoiceStatus->type = $request->type;
+            $InvoiceStatus->name = $request->name;
+            return response()->json(['message'=>'InvoiceStatus Update Successfully'],200); 
+        }
+        else{
+            return response()->json(['message'=>'InvoiceStatus Update Unsuccessfully'],404);
+        }
+
+       
+        
+       
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\InvoiceStatus  $invoiceStatus
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(InvoiceStatus $invoiceStatus)
+    public function destroy($id)
     {
-        //
+        $InvoiceStatus = InvoiceStatus::find($id);
+        if($InvoiceStatus){
+            $InvoiceStatus->delete();
+            return response()->json(['message'=>'InvoiceStatus Delete Successfully'],200); 
+        }
+        else{
+            return response()->json(['message'=>'InvoiceStatus Delete Unsuccessfully'],404);
+        }
     }
 }

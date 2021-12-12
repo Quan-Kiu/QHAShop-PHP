@@ -3,8 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Size;
-use App\Http\Requests\StoreSizeRequest;
-use App\Http\Requests\UpdateSizeRequest;
+use Illuminate\Http\Request;
 
 class SizeController extends Controller
 {
@@ -15,7 +14,8 @@ class SizeController extends Controller
      */
     public function index()
     {
-        //
+        $Size = Size::all();
+        return response()->json(['Sizes'=>$Size],200);
     }
 
     /**
@@ -31,32 +31,47 @@ class SizeController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\StoreSizeRequest  $request
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreSizeRequest $request)
+    public function store(Request $request)
     {
-        //
+         $request->validate([
+            'name'=>'required|max:191',
+            'product_id'=>'required|max:191',
+        ]); 
+        
+         $Size = new Size;
+        $Size->name = $request->name;
+        $Size->product_id = $request->product_id;
+        $Size->save(); 
+        return response()->json(['message'=>'Size Add Successfully'],200);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Size  $size
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Size $size)
+    public function show($id)
     {
-        //
+        $Size = Size::find($id);
+        if($Size){
+            return response()->json(['Size'=>$Size],200);
+        }
+        else{
+            return response()->json(['message'=>'No Size Found'],404);
+        }
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Size  $size
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(Size $size)
+    public function edit($id)
     {
         //
     }
@@ -64,23 +79,51 @@ class SizeController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \App\Http\Requests\UpdateSizeRequest  $request
-     * @param  \App\Models\Size  $size
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateSizeRequest $request, Size $size)
+    public function update(Request $request, $id)
     {
-        //
+        /* $Size = Size::find($id);
+        $Size->update($request->all());
+        return $Size ;*/
+        $request->validate([
+            'name'=>'required|max:191',
+            'product_id'=>'required|max:191',
+        ]); 
+        
+        $Size = Size::find($id);
+        if($Size){
+            $Size->name = $request->name;
+            $Size->product_id = $request->product_id;
+            $Size->update();
+            return response()->json(['message'=>'Size Update Successfully'],200); 
+        }
+        else{
+            return response()->json(['message'=>'Size Update Unsuccessfully'],404);
+        }
+
+       
+        
+       
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Size  $size
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Size $size)
+    public function destroy($id)
     {
-        //
+        $Size = Size::find($id);
+        if($Size){
+            $Size->delete();
+            return response()->json(['message'=>'Size Delete Successfully'],200); 
+        }
+        else{
+            return response()->json(['message'=>'Size Delete Unsuccessfully'],404);
+        }
     }
 }

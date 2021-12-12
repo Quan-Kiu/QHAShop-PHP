@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
+
 use App\Models\InvoiceDetail;
-use App\Http\Requests\StoreInvoiceDetailRequest;
-use App\Http\Requests\UpdateInvoiceDetailRequest;
 
 class InvoiceDetailController extends Controller
 {
@@ -15,7 +15,8 @@ class InvoiceDetailController extends Controller
      */
     public function index()
     {
-        //
+        $InvoiceDetail = InvoiceDetail::all();
+        return response()->json(['InvoiceDetails'=>$InvoiceDetail],200);
     }
 
     /**
@@ -31,32 +32,53 @@ class InvoiceDetailController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\StoreInvoiceDetailRequest  $request
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreInvoiceDetailRequest $request)
+    public function store(Request $request)
     {
-        //
+         $request->validate([
+            'product_id'=>'required|max:191',
+            'invoice_id'=>'required|max:191',
+            'quantity'=>'required|max:191',
+            'unit_price'=>'required|max:191',
+            'stock'=>'required|max:191',
+        ]); 
+        
+         $InvoiceDetail = new InvoiceDetail;
+        $InvoiceDetail->product_id = $request->product_id;
+        $InvoiceDetail->invoice_id = $request->invoice_id;
+        $InvoiceDetail->quantity = $request->quantity;
+        $InvoiceDetail->supplier_id = $request->unit_price;
+        $InvoiceDetail->description = $request->description;
+        $InvoiceDetail->save(); 
+        return response()->json(['message'=>'InvoiceDetail Add Successfully'],200);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\InvoiceDetail  $invoiceDetail
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(InvoiceDetail $invoiceDetail)
+    public function show($id)
     {
-        //
+        $InvoiceDetail = InvoiceDetail::find($id);
+        if($InvoiceDetail){
+            return response()->json(['InvoiceDetail'=>$InvoiceDetail],200);
+        }
+        else{
+            return response()->json(['message'=>'No InvoiceDetail Found'],404);
+        }
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\InvoiceDetail  $invoiceDetail
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(InvoiceDetail $invoiceDetail)
+    public function edit($id)
     {
         //
     }
@@ -64,23 +86,57 @@ class InvoiceDetailController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \App\Http\Requests\UpdateInvoiceDetailRequest  $request
-     * @param  \App\Models\InvoiceDetail  $invoiceDetail
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateInvoiceDetailRequest $request, InvoiceDetail $invoiceDetail)
+    public function update(Request $request, $id)
     {
-        //
+        /* $InvoiceDetail = InvoiceDetail::find($id);
+        $InvoiceDetail->update($request->all());
+        return $InvoiceDetail ;*/
+        $request->validate([
+            'product_id'=>'required|max:191',
+            'invoice_id'=>'required|max:191',
+            'quantity'=>'required|max:191',
+            'unit_price'=>'required|max:191',
+            'stock'=>'required|max:191',
+        ]); 
+        
+        $InvoiceDetail = InvoiceDetail::find($id);
+        if($InvoiceDetail){
+            $InvoiceDetail->product_id = $request->product_id;
+            $InvoiceDetail->invoice_id = $request->invoice_id;
+            $InvoiceDetail->quantity = $request->quantity;
+            $InvoiceDetail->supplier_id = $request->unit_price;
+            $InvoiceDetail->description = $request->description;
+            $InvoiceDetail->update();
+            return response()->json(['message'=>'InvoiceDetail Update Successfully'],200); 
+        }
+        else{
+            return response()->json(['message'=>'InvoiceDetail Update Unsuccessfully'],404);
+        }
+
+       
+        
+       
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\InvoiceDetail  $invoiceDetail
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(InvoiceDetail $invoiceDetail)
+    public function destroy($id)
     {
-        //
+        $InvoiceDetail = InvoiceDetail::find($id);
+        if($InvoiceDetail){
+            $InvoiceDetail->delete();
+            return response()->json(['message'=>'InvoiceDetail Delete Successfully'],200); 
+        }
+        else{
+            return response()->json(['message'=>'InvoiceDetail Delete Unsuccessfully'],404);
+        }
     }
 }

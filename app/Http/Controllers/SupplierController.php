@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
+
 use App\Models\Supplier;
-use App\Http\Requests\StoreSupplierRequest;
-use App\Http\Requests\UpdateSupplierRequest;
 
 class SupplierController extends Controller
 {
@@ -15,7 +15,8 @@ class SupplierController extends Controller
      */
     public function index()
     {
-        //
+        $Supplier = Supplier::all();
+        return response()->json(['Suppliers'=>$Supplier],200);
     }
 
     /**
@@ -31,32 +32,49 @@ class SupplierController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\StoreSupplierRequest  $request
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreSupplierRequest $request)
+    public function store(Request $request)
     {
-        //
+         $request->validate([
+            'name'=>'required|max:191',
+            'email'=>'required|max:191',
+            'phone'=>'required|max:191',
+        ]); 
+        
+         $Supplier = new Supplier;
+        $Supplier->name = $request->name;
+        $Supplier->email = $request->email;
+        $Supplier->phone = $request->phone;
+        $Supplier->save(); 
+        return response()->json(['message'=>'Supplier Add Successfully'],200);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Supplier  $supplier
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Supplier $supplier)
+    public function show($id)
     {
-        //
+        $Supplier = Supplier::find($id);
+        if($Supplier){
+            return response()->json(['Supplier'=>$Supplier],200);
+        }
+        else{
+            return response()->json(['message'=>'No Supplier Found'],404);
+        }
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Supplier  $supplier
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(Supplier $supplier)
+    public function edit($id)
     {
         //
     }
@@ -64,23 +82,53 @@ class SupplierController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \App\Http\Requests\UpdateSupplierRequest  $request
-     * @param  \App\Models\Supplier  $supplier
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateSupplierRequest $request, Supplier $supplier)
+    public function update(Request $request, $id)
     {
-        //
+        /* $Supplier = Supplier::find($id);
+        $Supplier->update($request->all());
+        return $Supplier ;*/
+        $request->validate([
+            'name'=>'required|max:191',
+            'email'=>'required|max:191',
+            'phone'=>'required|max:191',
+        ]); 
+        
+        $Supplier = Supplier::find($id);
+        if($Supplier){
+            $Supplier->name = $request->name;
+            $Supplier->email = $request->email;
+            $Supplier->phone = $request->phone;
+            $Supplier->update();
+            return response()->json(['message'=>'Supplier Update Successfully'],200); 
+        }
+        else{
+            return response()->json(['message'=>'Supplier Update Unsuccessfully'],404);
+        }
+
+       
+        
+       
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Supplier  $supplier
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Supplier $supplier)
+    public function destroy($id)
     {
-        //
+        $Supplier = Supplier::find($id);
+        if($Supplier){
+            $Supplier->delete();
+            return response()->json(['message'=>'Supplier Delete Successfully'],200); 
+        }
+        else{
+            return response()->json(['message'=>'Supplier Delete Unsuccessfully'],404);
+        }
     }
 }

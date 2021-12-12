@@ -3,8 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Image;
-use App\Http\Requests\StoreImageRequest;
-use App\Http\Requests\UpdateImageRequest;
+use Illuminate\Http\Request;
 
 class ImageController extends Controller
 {
@@ -15,7 +14,8 @@ class ImageController extends Controller
      */
     public function index()
     {
-        //
+        $Image = Image::all();
+        return response()->json(['Images'=>$Image],200);
     }
 
     /**
@@ -31,32 +31,47 @@ class ImageController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\StoreImageRequest  $request
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreImageRequest $request)
+    public function store(Request $request)
     {
-        //
+         $request->validate([
+            'url'=>'required|max:191',
+            'product_id'=>'required|max:191',
+        ]); 
+        
+         $Image = new Image;
+        $Image->url = $request->url;
+        $Image->product_id = $request->product_id;
+        $Image->save(); 
+        return response()->json(['message'=>'Image Add Successfully'],200);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Image  $image
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Image $image)
+    public function show($id)
     {
-        //
+        $Image = Image::find($id);
+        if($Image){
+            return response()->json(['Image'=>$Image],200);
+        }
+        else{
+            return response()->json(['message'=>'No Image Found'],404);
+        }
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Image  $image
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(Image $image)
+    public function edit($id)
     {
         //
     }
@@ -64,23 +79,51 @@ class ImageController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \App\Http\Requests\UpdateImageRequest  $request
-     * @param  \App\Models\Image  $image
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateImageRequest $request, Image $image)
+    public function update(Request $request, $id)
     {
-        //
+        /* $Image = Image::find($id);
+        $Image->update($request->all());
+        return $Image ;*/
+        $request->validate([
+            'url'=>'required|max:191',
+            'product_id'=>'required|max:191',
+        ]); 
+        
+        $Image = Image::find($id);
+        if($Image){
+            $Image->url = $request->url;
+            $Image->product_id = $request->product_id;
+            $Image->update();
+            return response()->json(['message'=>'Image Update Successfully'],200); 
+        }
+        else{
+            return response()->json(['message'=>'Image Update Unsuccessfully'],404);
+        }
+
+       
+        
+       
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Image  $image
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Image $image)
+    public function destroy($id)
     {
-        //
+        $Image = Image::find($id);
+        if($Image){
+            $Image->delete();
+            return response()->json(['message'=>'Image Delete Successfully'],200); 
+        }
+        else{
+            return response()->json(['message'=>'Image Delete Unsuccessfully'],404);
+        }
     }
 }

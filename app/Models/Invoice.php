@@ -7,5 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Invoice extends Model
 {
-    use HasFactory;
+    protected $fillable = [
+        'user_id',
+        'shipping_address',
+        'shipping_phone',
+        'total',
+        'delivery_date',
+        'invoice_status_id',
+    ];
 }
