@@ -3,8 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cart;
-use App\Http\Requests\StoreCartRequest;
-use App\Http\Requests\UpdateCartRequest;
+use Illuminate\Http\Request;
 
 class CartController extends Controller
 {
@@ -15,7 +14,8 @@ class CartController extends Controller
      */
     public function index()
     {
-        //
+        $cart = cart::all();
+        return response()->json(['carts'=>$cart],200);
     }
 
     /**
@@ -31,32 +31,51 @@ class CartController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\StoreCartRequest  $request
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreCartRequest $request)
+    public function store(Request $request)
     {
-        //
+         $request->validate([
+            'product_id'=>'required|max:191',
+            'user_id'=>'required|max:191',
+            'description'=>'required|max:191',
+            'quantity'=>'required|max:191',
+        ]); 
+        
+        $cart = new Cart;
+        $cart->product_id = $request->product_id;
+        $cart->user_id = $request->user_id;
+        $cart->description = $request->description;
+        $cart->quantity = $request->quantity;
+        $cart->save(); 
+        return response()->json(['message'=>'cart Add Successfully'],200);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Cart  $cart
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Cart $cart)
+    public function show($id)
     {
-        //
+        $cart = Cart::find($id);
+        if($cart){
+            return response()->json(['cart'=>$cart],200);
+        }
+        else{
+            return response()->json(['message'=>'No cart Found'],404);
+        }
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Cart  $cart
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(Cart $cart)
+    public function edit($id)
     {
         //
     }
@@ -64,23 +83,55 @@ class CartController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \App\Http\Requests\UpdateCartRequest  $request
-     * @param  \App\Models\Cart  $cart
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateCartRequest $request, Cart $cart)
+    public function update(Request $request, $id)
     {
-        //
+        /* $cart = cart::find($id);
+        $cart->update($request->all());
+        return $cart ;*/
+        $request->validate([
+            'product_id'=>'required|max:191',
+            'user_id'=>'required|max:191',
+            'description'=>'required|max:191',
+            'quantity'=>'required|max:191',
+        ]); 
+        
+        $cart = cart::find($id);
+        if($cart){
+            $cart->product_id = $request->product_id;
+            $cart->user_id = $request->user_id;
+            $cart->description = $request->description;
+            $cart->quantity = $request->quantity;
+            $cart->update();
+            return response()->json(['message'=>'cart Update Successfully'],200); 
+        }
+        else{
+            return response()->json(['message'=>'cart Update Unsuccessfully'],404);
+        }
+
+       
+        
+       
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Cart  $cart
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Cart $cart)
+    public function destroy($id)
     {
-        //
+        $cart = cart::find($id);
+        if($cart){
+            $cart->delete();
+            return response()->json(['message'=>'cart Delete Successfully'],200); 
+        }
+        else{
+            return response()->json(['message'=>'cart Delete Unsuccessfully'],404);
+        }
     }
 }

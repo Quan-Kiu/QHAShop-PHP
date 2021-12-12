@@ -1,5 +1,18 @@
 <?php
 
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProductTypeController;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\ColorController;
+use App\Http\Controllers\CommentController;
+use App\Http\Controllers\ImageController;
+use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\InvoiceDetailController;
+use App\Http\Controllers\SizeController;
+use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\UserTypeController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\InvoiceStatusController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -17,3 +30,33 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::resource('product',ProductController::class);
+Route::get('product/search/{name}',[ProductController::class,'search']) ;
+
+Route::resource('producttype',ProductTypeController::class);
+Route::get('producttype/search/{name}',[ProductTypeController::class,'search']);
+
+Route::resource('cart',CartController::class);
+
+Route::resource('color',ColorController::class);
+
+Route::resource('comment',CommentController::class);
+
+Route::resource('image',ImageController::class);
+
+Route::resource('invoice',InvoiceController::class);
+
+Route::resource('invoice_detail',InvoiceDetailController::class);
+
+Route::resource('size',SizeController::class);
+
+Route::resource('supplier',SupplierController::class);
+
+Route::resource('user_type',UserTypeController::class);
+
+Route::resource('user',UserController::class);
+
+Route::resource('invoice_status',InvoiceStatusController::class);
+
+
