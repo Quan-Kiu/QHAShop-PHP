@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductTypeController;
 use App\Http\Controllers\CartController;
@@ -31,8 +32,13 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::group(['middleware'=>['auth:sanctum']], function(){
+    Route::get('product/search/{name}',[ProductController::class,'search']) ;
+    Route::post('/register',[AuthController::class,'register']);
+});
 Route::resource('product',ProductController::class);
-Route::get('product/search/{name}',[ProductController::class,'search']) ;
+Route::post('/logout',[AuthController::class,'logout']);
+Route::post('/login',[AuthController::class,'login']);
 
 Route::resource('producttype',ProductTypeController::class);
 Route::get('producttype/search/{name}',[ProductTypeController::class,'search']);
@@ -58,5 +64,6 @@ Route::resource('user_type',UserTypeController::class);
 Route::resource('user',UserController::class);
 
 Route::resource('invoice_status',InvoiceStatusController::class);
+
 
 
