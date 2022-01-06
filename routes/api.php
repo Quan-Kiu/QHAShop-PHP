@@ -28,42 +28,41 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::post('/register', [AuthController::class, 'register']);
+
+Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
+
+Route::group(['middleware' => ['auth:sanctum']], function () {
+    Route::get('product/search/{name}', [ProductController::class, 'search']);
 });
 
-Route::group(['middleware'=>['auth:sanctum']], function(){
-    Route::get('product/search/{name}',[ProductController::class,'search']) ;
-    Route::post('/register',[AuthController::class,'register']);
-});
-Route::resource('product',ProductController::class);
-Route::post('/logout',[AuthController::class,'logout']);
-Route::post('/login',[AuthController::class,'login']);
-
-Route::resource('producttype',ProductTypeController::class);
-Route::get('producttype/search/{name}',[ProductTypeController::class,'search']);
-
-Route::resource('cart',CartController::class);
-
-Route::resource('color',ColorController::class);
-
-Route::resource('comment',CommentController::class);
-
-Route::resource('image',ImageController::class);
-
-Route::resource('invoice',InvoiceController::class);
-
-Route::resource('invoice_detail',InvoiceDetailController::class);
-
-Route::resource('size',SizeController::class);
-
-Route::resource('supplier',SupplierController::class);
-
-Route::resource('user_type',UserTypeController::class);
-
-Route::resource('user',UserController::class);
-
-Route::resource('invoice_status',InvoiceStatusController::class);
 
 
+Route::resource('product', ProductController::class);
+Route::post('/logout', [AuthController::class, 'logout']);
+Route::post('/login', [AuthController::class, 'login']);
 
+Route::resource('producttype', ProductTypeController::class);
+Route::get('producttype/search/{name}', [ProductTypeController::class, 'search']);
+
+Route::resource('cart', CartController::class);
+
+Route::resource('color', ColorController::class);
+
+Route::resource('comment', CommentController::class);
+
+Route::resource('image', ImageController::class);
+
+Route::resource('invoice', InvoiceController::class);
+
+Route::resource('invoice_detail', InvoiceDetailController::class);
+
+Route::resource('size', SizeController::class);
+
+Route::resource('supplier', SupplierController::class);
+
+Route::resource('user_type', UserTypeController::class);
+
+Route::resource('user', UserController::class);
+
+Route::resource('invoice_status', InvoiceStatusController::class);
